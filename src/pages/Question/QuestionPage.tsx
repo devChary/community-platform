@@ -29,7 +29,6 @@ export const QuestionPage = () => {
     undefined,
   )
   const [isEditable, setIsEditable] = useState(false)
-  const [hasUserSubscribed, setHasUserSubscribed] = useState(false)
   const [comments, setComments] = useState<IDiscussionComment[]>([])
 
   useEffect(() => {
@@ -53,9 +52,6 @@ export const QuestionPage = () => {
           }
         }
 
-        setHasUserSubscribed(
-          foundQuestion?.subscribers?.includes(store.activeUser?.userName),
-        )
         if (foundQuestion && discussionStore) {
           try {
             const discussion =
@@ -101,13 +97,13 @@ export const QuestionPage = () => {
   }
 
   const isLoggedIn = store.activeUser ? true : false
-  const onFollowClick = () => {
+  const onFollowClick = async () => {
     if (question) {
-      store.toggleSubscriberStatusByUserName(
+      await store.toggleSubscriberStatusByUserName(
         question._id,
         store.activeUser?.userName,
       )
-      setHasUserSubscribed(!hasUserSubscribed)
+      setQuestion(store.activeQuestionItem)
     }
     return null
   }
@@ -128,7 +124,7 @@ export const QuestionPage = () => {
                   onUsefulClick={onUsefulClick}
                 />
                 <FollowButton
-                  hasUserSubscribed={hasUserSubscribed}
+                  hasUserSubscribed={store.userHasSubscribed}
                   isLoggedIn={isLoggedIn ? true : false}
                   onFollowClick={onFollowClick}
                 />
